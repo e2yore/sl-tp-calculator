@@ -9,11 +9,13 @@
     input, select { margin-left: 5px; padding: 4px; }
     .row { display: flex; align-items: center; margin-top: 12px; }
     .row label { width: 110px; }
-    .result { margin-top: 30px; font-weight: bold; color: #333; }
+    button { margin-top: 20px; padding: 8px 16px; font-size: 14px; }
+    .blue { color: #0066cc; font-weight: bold; }
+    .red { color: #cc0000; font-weight: bold; }
   </style>
 </head>
 <body>
-  <h2>SL/TP 손익 계산기 - <span id="symbolLabel" style="color: red">Gold</span></h2>
+  <h2>SL/TP 손익 계산기 - <span id="symbolLabel">종목 선택</span></h2>
 
   <label>종목:
     <select id="symbol" onchange="recalculateAll()">
@@ -39,26 +41,24 @@
   </div>
 
   <div class="row">
-    <label>익절금액 ($):</label>
-    <input id="profitInput" type="number" step="0.01" oninput="updateTPFromProfit()">
+    <label class="blue">익절금액 ($):</label>
+    <input id="profitInput" type="number" step="0.01" oninput="updateTPFromProfit()" class="blue">
   </div>
 
   <div class="row">
-    <label>TP 가격:</label>
-    <input id="tpPrice" type="number" step="0.01" oninput="updateProfitFromTP()">
+    <label class="blue">TP 가격:</label>
+    <input id="tpPrice" type="number" step="0.01" oninput="updateProfitFromTP()" class="blue">
   </div>
 
   <div class="row">
-    <label>손절금액 ($):</label>
-    <input id="lossInput" type="number" step="0.01" oninput="updateSLFromLoss()">
+    <label class="red">손절금액 ($):</label>
+    <input id="lossInput" type="number" step="0.01" oninput="updateSLFromLoss()" class="red">
   </div>
 
   <div class="row">
-    <label>SL 가격:</label>
-    <input id="slPrice" type="number" step="0.01" oninput="updateLossFromSL()">
+    <label class="red">SL 가격:</label>
+    <input id="slPrice" type="number" step="0.01" oninput="updateLossFromSL()" class="red">
   </div>
-
-  <div id="result" class="result"></div>
 
   <script>
     function getMultiplier() {
@@ -83,7 +83,6 @@
       const distance = profit / (lot * multiplier);
       const tp = position === "buy" ? entry + distance : entry - distance;
       document.getElementById("tpPrice").value = tp.toFixed(2);
-      recalculateAll();
     }
 
     function updateProfitFromTP() {
@@ -94,7 +93,6 @@
       const distance = position === "buy" ? tp - entry : entry - tp;
       const profit = distance * lot * multiplier;
       document.getElementById("profitInput").value = profit.toFixed(2);
-      recalculateAll();
     }
 
     function updateSLFromLoss() {
@@ -105,7 +103,6 @@
       const distance = loss / (lot * multiplier);
       const sl = position === "buy" ? entry - distance : entry + distance;
       document.getElementById("slPrice").value = sl.toFixed(2);
-      recalculateAll();
     }
 
     function updateLossFromSL() {
@@ -116,35 +113,12 @@
       const distance = position === "buy" ? entry - sl : sl - entry;
       const loss = distance * lot * multiplier;
       document.getElementById("lossInput").value = loss.toFixed(2);
-      recalculateAll();
     }
 
     function recalculateAll() {
-      const entry = parseFloat(document.getElementById("entry").value);
-      const lot = parseFloat(document.getElementById("lot").value);
-      const tp = parseFloat(document.getElementById("tpPrice").value);
-      const sl = parseFloat(document.getElementById("slPrice").value);
-      const position = document.getElementById("position").value;
-      const multiplier = getMultiplier();
-
-      if (isNaN(entry) || isNaN(lot)) {
-        document.getElementById("result").innerHTML = "<span style='color:red'>⚠️ 진입가와 랏수를 입력해주세요.</span>";
-        return;
-      }
-
-      let profit = 0, loss = 0;
-      if (!isNaN(tp)) {
-        profit = position === 'buy' ? (tp - entry) * lot * multiplier : (entry - tp) * lot * multiplier;
-      }
-      if (!isNaN(sl)) {
-        loss = position === 'buy' ? (entry - sl) * lot * multiplier : (sl - entry) * lot * multiplier;
-      }
-
-      const result = `
-        예상 익절금액: +$${profit.toFixed(2)}<br>
-        예상 손절금액: -$${loss.toFixed(2)}
-      `;
-      document.getElementById("result").innerHTML = result;
+      const symbol = document.getElementById("symbol").value;
+      const label = document.getElementById("symbolLabel");
+      label.textContent = symbol === "gold" ? "Gold" : "NASDAQ";
     }
   </script>
 </body>
