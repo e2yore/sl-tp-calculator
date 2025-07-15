@@ -8,8 +8,8 @@
     label { display: block; margin-top: 12px; }
     input, select { margin-left: 5px; padding: 4px; }
     .row { display: flex; align-items: center; margin-top: 12px; }
-    .row label { width: 100px; }
-    .result { margin-top: 30px; font-weight: bold; }
+    .row label { width: 110px; }
+    .result { margin-top: 30px; font-weight: bold; color: #333; }
     button { margin-top: 20px; padding: 8px 16px; font-size: 14px; }
   </style>
 </head>
@@ -24,11 +24,11 @@
   </label>
 
   <label>진입가:
-    <input id="entry" type="number" step="0.01" placeholder="예: 3324.81">
+    <input id="entry" type="number" step="0.01" placeholder="예: 3324.81" oninput="reverseCalc()">
   </label>
 
   <label>포지션:
-    <select id="position">
+    <select id="position" onchange="reverseCalc()">
       <option value="buy">Buy</option>
       <option value="sell">Sell</option>
     </select>
@@ -36,17 +36,27 @@
 
   <div class="row">
     <label>랏수:</label>
-    <input id="lot" type="number" step="0.01" value="0.01">
+    <input id="lot" type="number" step="0.01" value="0.01" oninput="reverseCalc()">
+  </div>
+
+  <div class="row">
+    <label>익절금액 ($):</label>
+    <input id="profitInput" type="number" step="0.01" placeholder="예: 20" oninput="reverseCalc()">
+  </div>
+
+  <div class="row">
+    <label>손절금액 ($):</label>
+    <input id="lossInput" type="number" step="0.01" placeholder="예: 15" oninput="reverseCalc()">
   </div>
 
   <div class="row">
     <label>TP 가격:</label>
-    <input id="tpPrice" type="number" step="0.01" placeholder="예: 3326.21">
+    <input id="tpPrice" type="number" step="0.01" placeholder="자동 계산됨">
   </div>
 
   <div class="row">
     <label>SL 가격:</label>
-    <input id="slPrice" type="number" step="0.01" placeholder="예: 3323.00">
+    <input id="slPrice" type="number" step="0.01" placeholder="자동 계산됨">
   </div>
 
   <button onclick="calculate()">계산하기</button>
@@ -56,38 +66,57 @@
   <script>
     function updateLabel() {
       const symbol = document.getElementById("symbol").value;
-      const label = document.getElementById("symbolLabel");
-
-      label.textContent = symbol === "gold" ? "Gold" : "NASDAQ";
+      document.getElementById("symbolLabel").textContent = symbol === "gold" ? "Gold" : "NASDAQ";
+      reverseCalc();
     }
 
-    function calculate() {
+    function reverseCalc() {
+      const entry = parseFloat(document.getElementById("entry").value);
+      const lot = parseFloat(document.getElementById("lot").value);
+      const profit = parseFloat(document.getElementById("profitInput").value);
+      const loss = parseFloat(document.getElementById("lossInput").value);
+      const position = document.getElementById("position").value;
       const symbol = document.getElementById("symbol").value;
-      const entry = parseFloat(document.getElementById('entry').value);
-      const position = document.getElementById('position').value;
-      const lot = parseFloat(document.getElementById('lot').value);
-      const tp = parseFloat(document.getElementById('tpPrice').value);
-      const sl = parseFloat(document.getElementById('slPrice').value);
 
       let multiplier = symbol === "nasdaq" ? 100 : 100;
 
-      let profit = 0;
-      let loss = 0;
+      if (isNaN(entry) || isNaN(lot)) return;
+
+      if (!isNaN(profit)) {
+        const distance = profit / (lot * multiplier);
+        const tp = position === "buy" ? entry + distance : entry - distance;
+        document.getElementById("tpPrice").value = tp.toFixed(2);
+      }
+
+      if (!isNaN(loss)) {
+        const distance = loss / (lot * multiplier);
+        const sl = position === "buy" ? entry - distance : entry + distance;
+        document.getElementById("slPrice").value = sl.toFixed(2);
+      }
+    }
+
+    function calculate() {
+      const entry = parseFloat(document.getElementById('entry').value);
+      const lot = parseFloat(document.getElementById('lot').value);
+      const tp = parseFloat(document.getElementById('tpPrice').value);
+      const sl = parseFloat(document.getElementById('slPrice').value);
+      const position = document.getElementById('position').value;
+      const symbol = document.getElementById("symbol").value;
+
+      if (isNaN(entry) || isNaN(lot) || isNaN(tp) || isNaN(sl)) {
+        document.getElementById('result').innerHTML = "<span style='color: red'>⚠️ 모든 값을 입력해주세요.</span>";
+        return;
+      }
+
+      let multiplier = symbol === "nasdaq" ? 100 : 100;
+      let profit = 0, loss = 0;
 
       if (tp !== 0) {
-        if (position === 'buy') {
-          profit = (tp - entry) * lot * multiplier;
-        } else {
-          profit = (entry - tp) * lot * multiplier;
-        }
+        profit = position === 'buy' ? (tp - entry) * lot * multiplier : (entry - tp) * lot * multiplier;
       }
 
       if (sl !== 0) {
-        if (position === 'buy') {
-          loss = (entry - sl) * lot * multiplier;
-        } else {
-          loss = (sl - entry) * lot * multiplier;
-        }
+        loss = position === 'buy' ? (entry - sl) * lot * multiplier : (sl - entry) * lot * multiplier;
       }
 
       const result = `
