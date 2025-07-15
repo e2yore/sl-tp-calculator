@@ -2,16 +2,38 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SL/TP 자동 계산기</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    label { display: block; margin-top: 12px; }
-    input, select { margin-left: 5px; padding: 4px; }
-    .row { display: flex; align-items: center; margin-top: 12px; }
-    .row label { width: 110px; }
-    button { margin-top: 20px; padding: 8px 16px; font-size: 14px; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 480px;
+      margin: auto;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+    }
+    input, select {
+      margin-left: 5px;
+      padding: 6px;
+      font-size: 16px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      margin-top: 12px;
+    }
+    .row label {
+      width: 110px;
+      min-width: 100px;
+    }
     .blue { color: #0066cc; font-weight: bold; }
     .red { color: #cc0000; font-weight: bold; }
+    h2 { text-align: center; }
   </style>
 </head>
 <body>
@@ -41,12 +63,12 @@
   </div>
 
   <div class="row">
-    <label class="blue">익절금액 ($):</label>
+    <label class="green">익절금액 ($):</label>
     <input id="profitInput" type="number" step="0.01" oninput="updateTPFromProfit()" class="blue">
   </div>
 
   <div class="row">
-    <label class="blue">TP 가격:</label>
+    <label class="green">TP 가격:</label>
     <input id="tpPrice" type="number" step="0.01" oninput="updateProfitFromTP()" class="blue">
   </div>
 
@@ -117,8 +139,13 @@
 
     function recalculateAll() {
       const symbol = document.getElementById("symbol").value;
-      const label = document.getElementById("symbolLabel");
-      label.textContent = symbol === "gold" ? "Gold" : "NASDAQ";
+      document.getElementById("symbolLabel").textContent = symbol === "gold" ? "Gold" : "NASDAQ";
+
+      // 실시간 업데이트 전부 다시 계산
+      updateTPFromProfit();
+      updateProfitFromTP();
+      updateSLFromLoss();
+      updateLossFromSL();
     }
   </script>
 </body>
