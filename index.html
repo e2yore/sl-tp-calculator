@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>해외선물 SL/TP 계산기 (Gold)</title>
+  <title>SL/TP 계산기 - Test 1</title>
   <style>
     body { font-family: Arial; padding: 20px; }
     label { display: block; margin-top: 10px; }
@@ -13,7 +13,7 @@
   </style>
 </head>
 <body>
-  <h2>해외선물 SL/TP 계산기 (Gold)</h2>
+  <h2>SL/TP 손익 계산기 - <span style="color: red">Test 1</span></h2>
 
   <label>현재가:
     <input id="entry" type="number" step="0.01">
@@ -34,15 +34,11 @@
   <div class="row">
     <label>TP:</label>
     <input id="tp" type="number" step="0.01" value="5">
-    <span style="margin-left:10px">가격:</span>
-    <span id="tpPrice"></span>
   </div>
 
   <div class="row">
     <label>SL:</label>
     <input id="sl" type="number" step="0.01" value="3">
-    <span style="margin-left:10px">가격:</span>
-    <span id="slPrice"></span>
   </div>
 
   <button onclick="calculate()">계산하기</button>
@@ -74,9 +70,6 @@
 
       const loss = lot * multiplier * sl_distance;
       const profit = lot * multiplier * tp_distance;
-
-      document.getElementById("tpPrice").innerText = tp_price.toFixed(2);
-      document.getElementById("slPrice").innerText = sl_price.toFixed(2);
 
       const text = `
         예상 손절금액: -$${loss.toFixed(2)}<br>
