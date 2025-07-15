@@ -1,26 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <title>SL/TP 손익 계산기</title>
+  <meta charset="UTF-8">
+  <title>해외선물 SL/TP 계산기 (Gold)</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    label { display: block; margin-top: 10px; }
+    input { margin-left: 5px; }
+    .row { display: flex; align-items: center; margin-top: 10px; }
+    .row label { width: 60px; }
+    .result { margin-top: 20px; font-weight: bold; }
+  </style>
 </head>
 <body>
-  <h2>해외선물 SL/TP 손익 계산기 (Gold)</h2>
+  <h2>해외선물 SL/TP 계산기 (Gold)</h2>
 
-  <label>진입가: <input id="entry" type="number" step="0.01"></label><br>
-  <label>포지션: 
+  <label>현재가:
+    <input id="entry" type="number" step="0.01">
+  </label>
+
+  <label>포지션:
     <select id="position">
-      <option value="buy">Buy (매수)</option>
-      <option value="sell">Sell (매도)</option>
+      <option value="buy">Buy</option>
+      <option value="sell">Sell</option>
     </select>
-  </label><br>
-  <label>랏수 (lot): <input id="lot" type="number" step="0.01" value="0.01"></label><br>
-  <label>SL 거리 ($): <input id="sl" type="number" step="0.01" value="3"></label><br>
-  <label>TP 거리 ($): <input id="tp" type="number" step="0.01" value="5"></label><br><br>
+  </label>
+
+  <div class="row">
+    <label>랏수:</label>
+    <input id="lot" type="number" step="0.01" value="0.01">
+  </div>
+
+  <div class="row">
+    <label>TP:</label>
+    <input id="tp" type="number" step="0.01" value="5">
+    <span style="margin-left:10px">가격:</span>
+    <span id="tpPrice"></span>
+  </div>
+
+  <div class="row">
+    <label>SL:</label>
+    <input id="sl" type="number" step="0.01" value="3">
+    <span style="margin-left:10px">가격:</span>
+    <span id="slPrice"></span>
+  </div>
 
   <button onclick="calculate()">계산하기</button>
 
-  <h3 id="result"></h3>
+  <div id="result" class="result"></div>
 
   <script>
     function calculate() {
@@ -30,7 +57,7 @@
       const sl = parseFloat(document.getElementById('sl').value);
       const tp = parseFloat(document.getElementById('tp').value);
 
-      const multiplier = 100; // XAUUSD 기준 1 lot = 100 oz
+      const multiplier = 100; // GOLD: 1 lot = 100 oz
 
       let sl_price, tp_price;
 
@@ -42,18 +69,19 @@
         tp_price = entry - tp;
       }
 
-      const loss_value = lot * multiplier * sl;
-      const profit_value = lot * multiplier * tp;
+      const loss = lot * multiplier * sl;
+      const profit = lot * multiplier * tp;
 
-      const resultText = `
-        포지션: ${position.toUpperCase()}<br>
-        진입가: ${entry.toFixed(2)}<br>
-        ▶️ SL 가격: ${sl_price.toFixed(2)} → 손절 예상: <b>-$${loss_value.toFixed(2)}</b><br>
-        ▶️ TP 가격: ${tp_price.toFixed(2)} → 익절 예상: <b>+$${profit_value.toFixed(2)}</b><br>
+      document.getElementById("tpPrice").innerText = tp_price.toFixed(2);
+      document.getElementById("slPrice").innerText = sl_price.toFixed(2);
+
+      const text = `
+        예상 손절금액: -$${loss.toFixed(2)}<br>
+        예상 익절금액: +$${profit.toFixed(2)}
       `;
-
-      document.getElementById('result').innerHTML = resultText;
+      document.getElementById("result").innerHTML = text;
     }
   </script>
 </body>
 </html>
+
