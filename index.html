@@ -86,15 +86,15 @@
 
   <script>
     function getMultiplier() {
-      const symbol = document.getElementById("symbol").value;
-      switch (symbol) {
-        case "gold": return 100;
-        case "nasdaq": return 100;
-        case "btc": return 100;
-        case "eur": return 10000; // EURUSD: pip = 0.0001
-        default: return 100;
-      }
+    const symbol = document.getElementById("symbol").value;
+    switch (symbol) {
+      case "gold": return 100;        // OK
+      case "nasdaq": return 100;      // OK
+      case "btc": return 1;           // ✅ 수정됨!
+      case "eur": return 100000;      // ✅ 수정됨!
+      default: return 100;
     }
+  }
 
     function getValues() {
       return {
