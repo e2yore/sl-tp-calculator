@@ -31,7 +31,7 @@
       width: 110px;
       min-width: 100px;
     }
-    .blue { color: #0066cc; font-weight: bold; }
+    .green { color: green; font-weight: bold; }
     .red { color: #cc0000; font-weight: bold; }
     h2 { text-align: center; }
   </style>
@@ -59,17 +59,17 @@
 
   <div class="row">
     <label>랏수:</label>
-    <input id="lot" type="number" step="0.01" value="0.01" oninput="recalculateAll()">
+    <input id="lot" type="number" step="0.01" value="0.01" oninput="updateProfitFromTP()">
   </div>
 
   <div class="row">
     <label class="green">익절금액 ($):</label>
-    <input id="profitInput" type="number" step="0.01" oninput="updateTPFromProfit()" class="blue">
+    <input id="profitInput" type="number" step="0.01" oninput="updateTPFromProfit()" class="green">
   </div>
 
   <div class="row">
     <label class="green">TP 가격:</label>
-    <input id="tpPrice" type="number" step="0.01" oninput="updateProfitFromTP()" class="blue">
+    <input id="tpPrice" type="number" step="0.01" oninput="updateProfitFromTP()" class="green">
   </div>
 
   <div class="row">
@@ -140,12 +140,13 @@
     function recalculateAll() {
       const symbol = document.getElementById("symbol").value;
       document.getElementById("symbolLabel").textContent = symbol === "gold" ? "Gold" : "NASDAQ";
-
-      // 실시간 업데이트 전부 다시 계산
-      updateTPFromProfit();
-      updateProfitFromTP();
-      updateSLFromLoss();
+      
+      // SL/손절 계산은 항상 유지
       updateLossFromSL();
+
+      // TP 가격이 이미 입력되어 있으면 → 랏수 반영해서 금액만 업데이트
+      const tpValue = document.getElementById("tpPrice").value;
+      if (tpValue) updateProfitFromTP();
     }
   </script>
 </body>
