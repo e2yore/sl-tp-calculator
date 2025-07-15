@@ -5,11 +5,12 @@
   <title>SL/TP 계산기</title>
   <style>
     body { font-family: Arial; padding: 20px; }
-    label { display: block; margin-top: 10px; }
-    input { margin-left: 5px; }
-    .row { display: flex; align-items: center; margin-top: 10px; }
-    .row label { width: 80px; }
-    .result { margin-top: 20px; font-weight: bold; }
+    label { display: block; margin-top: 12px; }
+    input, select { margin-left: 5px; padding: 4px; }
+    .row { display: flex; align-items: center; margin-top: 12px; }
+    .row label { width: 100px; }
+    .result { margin-top: 30px; font-weight: bold; }
+    button { margin-top: 20px; padding: 8px 16px; font-size: 14px; }
   </style>
 </head>
 <body>
@@ -57,8 +58,7 @@
       const symbol = document.getElementById("symbol").value;
       const label = document.getElementById("symbolLabel");
 
-      if (symbol === "gold") label.textContent = "Gold";
-      else if (symbol === "nasdaq") label.textContent = "NASDAQ";
+      label.textContent = symbol === "gold" ? "Gold" : "NASDAQ";
     }
 
     function calculate() {
@@ -69,19 +69,25 @@
       const tp = parseFloat(document.getElementById('tpPrice').value);
       const sl = parseFloat(document.getElementById('slPrice').value);
 
-      // 종목별 multiplier 설정
-      let multiplier = 100; // Gold 기본값
-      if (symbol === "nasdaq") multiplier = 100; // 수정된 multiplier!
+      let multiplier = symbol === "nasdaq" ? 100 : 100;
 
       let profit = 0;
       let loss = 0;
 
-      if (position === 'buy') {
-        profit = (tp - entry) * lot * multiplier;
-        loss = (entry - sl) * lot * multiplier;
-      } else {
-        profit = (entry - tp) * lot * multiplier;
-        loss = (sl - entry) * lot * multiplier;
+      if (tp !== 0) {
+        if (position === 'buy') {
+          profit = (tp - entry) * lot * multiplier;
+        } else {
+          profit = (entry - tp) * lot * multiplier;
+        }
+      }
+
+      if (sl !== 0) {
+        if (position === 'buy') {
+          loss = (entry - sl) * lot * multiplier;
+        } else {
+          loss = (sl - entry) * lot * multiplier;
+        }
       }
 
       const result = `
