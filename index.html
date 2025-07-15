@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>SL/TP 계산기 - Test 3</title>
+  <title>SL/TP 계산기</title>
   <style>
     body { font-family: Arial; padding: 20px; }
     label { display: block; margin-top: 10px; }
@@ -13,7 +13,14 @@
   </style>
 </head>
 <body>
-  <h2>SL/TP 손익 계산기 - <span style="color: red">Test 3</span></h2>
+  <h2>SL/TP 손익 계산기 - <span id="symbolLabel" style="color: red">Gold</span></h2>
+
+  <label>종목:
+    <select id="symbol" onchange="updateLabel()">
+      <option value="gold" selected>Gold (XAUUSD)</option>
+      <option value="nasdaq">NASDAQ (US100)</option>
+    </select>
+  </label>
 
   <label>진입가:
     <input id="entry" type="number" step="0.01" placeholder="예: 3324.81">
@@ -46,14 +53,26 @@
   <div id="result" class="result"></div>
 
   <script>
+    function updateLabel() {
+      const symbol = document.getElementById("symbol").value;
+      const label = document.getElementById("symbolLabel");
+
+      if (symbol === "gold") label.textContent = "Gold";
+      else if (symbol === "nasdaq") label.textContent = "NASDAQ";
+    }
+
     function calculate() {
+      const symbol = document.getElementById("symbol").value;
       const entry = parseFloat(document.getElementById('entry').value);
       const position = document.getElementById('position').value;
       const lot = parseFloat(document.getElementById('lot').value);
       const tp = parseFloat(document.getElementById('tpPrice').value);
       const sl = parseFloat(document.getElementById('slPrice').value);
 
-      const multiplier = 100;
+      // 종목별 multiplier 설정
+      let multiplier = 100; // Gold 기본값
+      if (symbol === "nasdaq") multiplier = 100; // 수정된 multiplier!
+
       let profit = 0;
       let loss = 0;
 
