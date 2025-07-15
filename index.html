@@ -54,23 +54,26 @@
       const entry = parseFloat(document.getElementById('entry').value);
       const position = document.getElementById('position').value;
       const lot = parseFloat(document.getElementById('lot').value);
-      const sl = parseFloat(document.getElementById('sl').value);
-      const tp = parseFloat(document.getElementById('tp').value);
+      const sl_input = parseFloat(document.getElementById('sl').value);
+      const tp_input = parseFloat(document.getElementById('tp').value);
 
-      const multiplier = 100; // GOLD: 1 lot = 100 oz
+      const multiplier = 100;
 
       let sl_price, tp_price;
 
       if (position === 'buy') {
-        sl_price = entry - sl;
-        tp_price = entry + tp;
+        sl_price = entry - sl_input;
+        tp_price = entry + tp_input;
       } else {
-        sl_price = entry + sl;
-        tp_price = entry - tp;
+        sl_price = entry + sl_input;
+        tp_price = entry - tp_input;
       }
 
-      const loss = lot * multiplier * sl;
-      const profit = lot * multiplier * tp;
+      const sl_distance = Math.abs(entry - sl_price);
+      const tp_distance = Math.abs(tp_price - entry);
+
+      const loss = lot * multiplier * sl_distance;
+      const profit = lot * multiplier * tp_distance;
 
       document.getElementById("tpPrice").innerText = tp_price.toFixed(2);
       document.getElementById("slPrice").innerText = sl_price.toFixed(2);
