@@ -2,20 +2,20 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>SL/TP 계산기 - Test 2</title>
+  <title>SL/TP 계산기 - Test 3</title>
   <style>
     body { font-family: Arial; padding: 20px; }
     label { display: block; margin-top: 10px; }
     input { margin-left: 5px; }
     .row { display: flex; align-items: center; margin-top: 10px; }
-    .row label { width: 60px; }
+    .row label { width: 80px; }
     .result { margin-top: 20px; font-weight: bold; }
   </style>
 </head>
 <body>
-  <h2>SL/TP 손익 계산기 - <span style="color: red">Test 2</span></h2>
+  <h2>SL/TP 손익 계산기 - <span style="color: red">Test 3</span></h2>
 
-  <label>현재가:
+  <label>진입가:
     <input id="entry" type="number" step="0.01" placeholder="예: 3324.81">
   </label>
 
@@ -32,13 +32,13 @@
   </div>
 
   <div class="row">
-    <label>TP:</label>
-    <input id="tp" type="number" step="0.01" value="5">
+    <label>TP 가격:</label>
+    <input id="tpPrice" type="number" step="0.01" placeholder="예: 3326.21">
   </div>
 
   <div class="row">
-    <label>SL:</label>
-    <input id="sl" type="number" step="0.01" value="3">
+    <label>SL 가격:</label>
+    <input id="slPrice" type="number" step="0.01" placeholder="예: 3323.00">
   </div>
 
   <button onclick="calculate()">계산하기</button>
@@ -50,23 +50,20 @@
       const entry = parseFloat(document.getElementById('entry').value);
       const position = document.getElementById('position').value;
       const lot = parseFloat(document.getElementById('lot').value);
-      const tp_dist = parseFloat(document.getElementById('tp').value);
-      const sl_dist = parseFloat(document.getElementById('sl').value);
+      const tp = parseFloat(document.getElementById('tpPrice').value);
+      const sl = parseFloat(document.getElementById('slPrice').value);
 
       const multiplier = 100;
-
-      let tp_price, sl_price;
+      let profit = 0;
+      let loss = 0;
 
       if (position === 'buy') {
-        tp_price = entry + tp_dist;
-        sl_price = entry - sl_dist;
+        profit = (tp - entry) * lot * multiplier;
+        loss = (entry - sl) * lot * multiplier;
       } else {
-        tp_price = entry - tp_dist;
-        sl_price = entry + sl_dist;
+        profit = (entry - tp) * lot * multiplier;
+        loss = (sl - entry) * lot * multiplier;
       }
-
-      const profit = lot * multiplier * tp_dist;
-      const loss = lot * multiplier * sl_dist;
 
       const result = `
         예상 익절금액: +$${profit.toFixed(2)}<br>
