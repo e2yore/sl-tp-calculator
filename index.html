@@ -43,8 +43,9 @@
     <select id="symbol" onchange="recalculateAll()">
       <option value="gold" selected>Gold (XAUUSD)</option>
       <option value="nasdaq">NASDAQ (US100)</option>
-      <option value="btc">Bitcoin (BTCUSD)</option>
+      <option value="btcmini">BTCmini (BTCUSD)</option>
       <option value="eur">Euro (EURUSD)</option>
+      <option value="oil">Crude Oil (WTI)</option>
     </select>
   </label>
 
@@ -86,15 +87,16 @@
 
   <script>
     function getMultiplier() {
-    const symbol = document.getElementById("symbol").value;
-    switch (symbol) {
-      case "gold": return 100;        // OK
-      case "nasdaq": return 100;      // OK
-      case "btc": return 1;           // ✅ 수정됨!
-      case "eur": return 100000;      // ✅ 수정됨!
-      default: return 100;
+      const symbol = document.getElementById("symbol").value;
+      switch (symbol) {
+        case "gold": return 100;
+        case "nasdaq": return 100;
+        case "btcmini": return 1;         // BTCmini 반영
+        case "eur": return 100000;        // EURUSD
+        case "oil": return 1000;          // Crude Oil
+        default: return 100;
+      }
     }
-  }
 
     function getValues() {
       return {
@@ -147,11 +149,14 @@
 
     function recalculateAll() {
       const symbol = document.getElementById("symbol").value;
-      let symbolName = "선택";
-      if (symbol === "gold") symbolName = "Gold";
-      else if (symbol === "nasdaq") symbolName = "NASDAQ";
-      else if (symbol === "btc") symbolName = "BTCUSD";
-      else if (symbol === "eur") symbolName = "EURUSD";
+      let symbolName = {
+        gold: "Gold",
+        nasdaq: "NASDAQ",
+        btcmini: "BTCmini",
+        eur: "EURUSD",
+        oil: "Crude Oil"
+      }[symbol] || "선택";
+
       document.getElementById("symbolLabel").textContent = symbolName;
 
       const tp = document.getElementById("tpPrice").value;
